@@ -9,9 +9,9 @@ Dokumen ini berisi catatan kronologis mengenai seluruh permasalahan teknis (bug)
 * **Nama Aplikasi**: Kiki's Laundry Stock App
 * **Bahasa & Framework**: Kotlin Native (Android Jetpack Compose)
 * **Versi Rilis Terakhir**: **`v1.1.5.E7`** (versionCode 14)
-* **Tanda Tangan Digital Internal**: `This App was build by Chris Tambayong - Fumakill4` (disisipkan pada `MainActivity.kt`, `DashboardScreen.kt`, `AboutScreen.kt`, `SettingsScreen.kt`, dan `OutletDetailScreen.kt`).
+* **Tanda Tangan Digital Internal**: `This App was build by i729 - Fumakill4` (disisipkan pada `MainActivity.kt`, `DashboardScreen.kt`, `AboutScreen.kt`, `SettingsScreen.kt`, dan `OutletDetailScreen.kt`).
 * **Lokasi Deliverable Akhir**:
-  * APK Rilis: `/Users/christambayong/Downloads/Project/JCL KIKI/Apk/Kiki Laundry Stock App v.1.1.5.E7.apk`
+  * APK Rilis: `~/workspace/Downloads/Project/JCL KIKI/Apk/Kiki Laundry Stock App v.1.1.5.E7.apk`
 
 ---
 
@@ -114,7 +114,7 @@ Beberapa tata letak antarmuka dioptimalkan agar lebih proporsional dan presisi:
     * **Banner Hijau**: Masa berlaku aman (>30 hari tersisa).
     * **Banner Warning Amber**: Kurang dari 30 hari sebelum kedaluwarsa.
     * **Banner Bahaya Merah**: Sudah melewati batas tanggal.
-  * **Digital Signature**: Menambahkan tanda tangan internal `"This App was build by Chris Tambayong - Fumakill4"` pada file `OutletDetailScreen.kt` yang baru.
+  * **Digital Signature**: Menambahkan tanda tangan internal `"This App was build by i729 - Fumakill4"` pada file `OutletDetailScreen.kt` yang baru.
   * **Perbaikan Tampilan Versi di Halaman Tentang (About)**: Memperbaiki string versi hardcoded lama (`1.1.1` / `1.1.5.E4`) pada kartu "Informasi Aplikasi" dan pesan Toast cek pembaruan di `AboutScreen.kt` agar otomatis sinkron menampilkan versi rilis terbaru (`v1.1.5.E5`).
   * **Kepatuhan Format Tanda Baca (Style Guide)**: Menghapus semua tanda seru (`!`) pada pesan Toast di dalam `OutletDetailScreen.kt` dan `AboutScreen.kt` serta menggantinya dengan titik (`.`) untuk kepatuhan tata bahasa yang profesional.
 

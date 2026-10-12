@@ -36,17 +36,17 @@ Setiap kali ada instruksi untuk memperbaiki (*fix*), memperbarui, atau merevisi 
 4. **Tanda Tangan Digital Internal (In-Code Digital Signature)**:
    * Selalu sisipkan komentar tanda tangan digital berikut ke dalam file kode sumber utama (seperti `MainActivity.kt`, `DashboardScreen.kt`, dsb.) sebagai komentar internal:
      ```kotlin
-     // This App was build by Chris Tambayong - Fumakill4
+     // This App was build by i729 - Fumakill4
      ```
    * *Ketentuan*: Tanda tangan ini diletakkan di dalam baris kode (code comment atau internal metadata constant), **bukan pada antarmuka pengguna (UI)** yang terlihat oleh user biasa. Tujuannya adalah agar tanda tangan ini tetap terbaca ketika APK didekompilasi.
 
 5. **Isolasi Folder Output & File Proyek**:
-   * **Folder Induk Project**: `/Users/christambayong/Downloads/Project/`
-   * **Berkas Checklist Master**: File `project_check_list.md` wajib disimpan langsung di bawah folder induk: `/Users/christambayong/Downloads/Project/project_check_list.md`.
+   * **Folder Induk Project**: `~/workspace/Downloads/Project/`
+   * **Berkas Checklist Master**: File `project_check_list.md` wajib disimpan langsung di bawah folder induk: `~/workspace/Downloads/Project/project_check_list.md`.
    * **Folder Spesifik Proyek**: Setiap aplikasi baru wajib dibuatkan foldernya sendiri di dalam folder induk menggunakan nama proyek tersebut, misalnya:
-     * Aplikasi Absensi & Gaji: `/Users/christambayong/Downloads/Project/Aplikasi Gaji/`
-     * Aplikasi Laundry Kiki: `/Users/christambayong/Downloads/Project/JCL KIKI/`
-     * Aplikasi Toko Queensha: `/Users/christambayong/Downloads/Project/Toko Queensha/`
+     * Aplikasi Absensi & Gaji: `~/workspace/Downloads/Project/Aplikasi Gaji/`
+     * Aplikasi Laundry Kiki: `~/workspace/Downloads/Project/JCL KIKI/`
+     * Aplikasi Toko Queensha: `~/workspace/Downloads/Project/Toko Queensha/`
    * **Penyimpanan Berkas Proyek**: Semua perubahan kode, APK/AAB rilis, dan file laporan `.md` yang spesifik untuk proyek tersebut **harus** diletakkan di dalam folder proyek masing-masing.
    * *Tujuan*: Agar pengguna dapat menyuruh AI Agent memanggil (*recall*) file `.md` spesifik langsung dari folder proyek tersebut, serta membaca aturan master dari folder induk `Project/`.
 
@@ -195,7 +195,7 @@ Sebelum menyatakan tugas selesai dan menyerahkan aplikasi kepada user:
 3. **Pindahkan File Rilis Secara Akurat**:
    * Kompilasi APK rilis dengan nama file dan nomor versi edit yang tepat.
    * Salin file APK ke folder tujuan proyek yang tepat:
-     * Lokasi: `/Users/christambayong/Downloads/Project/[Nama Proyek]/`
+     * Lokasi: `~/workspace/Downloads/Project/[Nama Proyek]/`
 
 ---
 *Dokumen ini disusun agar tidak ada lagi kesalahan dasar yang terulang. Patuhi setiap poin demi keamanan database dan reputasi aplikasi.*

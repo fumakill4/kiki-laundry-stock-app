@@ -24,10 +24,29 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val keystore = System.getenv("JCL_RELEASE_KEYSTORE")
+            val storePass = System.getenv("JCL_RELEASE_STORE_PASSWORD")
+            val alias = System.getenv("JCL_RELEASE_KEY_ALIAS")
+            val keyPass = System.getenv("JCL_RELEASE_KEY_PASSWORD")
+            if (gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }) {
+                require(!keystore.isNullOrBlank() && !storePass.isNullOrBlank() && !alias.isNullOrBlank() && !keyPass.isNullOrBlank()) {
+                    "Configure private JCL_RELEASE_* signing credentials before building a release."
+                }
+            }
+            if (!keystore.isNullOrBlank()) storeFile = file(keystore)
+            storePassword = storePass
+            keyAlias = alias
+            keyPassword = keyPass
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+            // Release builds require a private signing key supplied by the operator.
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

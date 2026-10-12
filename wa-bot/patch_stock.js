@@ -1,3 +1,4 @@
+if (!process.env.FIREBASE_WEB_API_KEY || !process.env.FIREBASE_ID_TOKEN) throw new Error('Provide authenticated maintenance credentials outside the source code');
 const https = require('https');
 
 function patchItem(itemId, totalOut) {
@@ -10,10 +11,11 @@ function patchItem(itemId, totalOut) {
     const options = {
         hostname: 'firestore.googleapis.com',
         port: 443,
-        path: `/v1/projects/laundry-stock-app/databases/(default)/documents/items/${itemId}?updateMask.fieldPaths=totalOut&key=AIzaSyCXFBkgGw-piTUm10Kn921rSbvsI4T7U14`,
+        path: `/v1/projects/laundry-stock-app/databases/(default)/documents/items/${itemId}?updateMask.fieldPaths=totalOut&key=${process.env.FIREBASE_WEB_API_KEY}`,
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.FIREBASE_ID_TOKEN}`,
             'Content-Length': data.length
         }
     };

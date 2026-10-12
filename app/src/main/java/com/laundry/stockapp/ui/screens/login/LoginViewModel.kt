@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(
 
     fun login(email: String, pass: String) {
         val cleanEmail = email.trim()
-        val cleanPass = pass.trim()
+        val cleanPass = pass
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
             try {
@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(
                 _state.value = _state.value.copy(isLoading = false, isLoggedIn = true)
             } catch (e: Exception) {
                 val errorMsg = if (e.message?.contains("PERMISSION_DENIED") == true) {
-                    "Akses ditolak oleh Firebase! Database Anda terkunci. Silakan ubah Rules di Firebase Console."
+                    "Akses belum disetujui. Hubungi administrator; jangan membuka aturan database."
                 } else {
                     e.message
                 }
@@ -46,7 +46,7 @@ class LoginViewModel @Inject constructor(
 
     fun register(name: String, email: String, phone: String, pass: String) {
         val cleanEmail = email.trim()
-        val cleanPass = pass.trim()
+        val cleanPass = pass
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
             try {
@@ -60,7 +60,7 @@ class LoginViewModel @Inject constructor(
                 _state.value = _state.value.copy(isLoading = false, isLoggedIn = true)
             } catch (e: Exception) {
                 val errorMsg = if (e.message?.contains("PERMISSION_DENIED") == true) {
-                    "Akses ditolak oleh Firebase! Database Anda terkunci (Rules kadaluarsa/production mode). Silakan buka Firebase Console -> Firestore Database -> Rules, lalu ubah menjadi 'allow read, write: if true;'"
+                    "Akses belum disetujui. Hubungi administrator; jangan membuka aturan database."
                 } else {
                     e.message
                 }
