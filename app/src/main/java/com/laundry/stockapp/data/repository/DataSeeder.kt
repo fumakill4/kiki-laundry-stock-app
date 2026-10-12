@@ -18,7 +18,6 @@ class DataSeeder @Inject constructor() {
         try {
             val itemsCol = db.collection("items")
             val outletsCol = db.collection("outlets")
-            val usersCol = db.collection("users")
 
             var itemCount = -1
             try {
@@ -89,7 +88,6 @@ class DataSeeder @Inject constructor() {
                 }
             }
 
-            seedUsers(usersCol)
             migrateOutletRegionCase(outletsCol)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -160,46 +158,4 @@ class DataSeeder @Inject constructor() {
         }
     }
 
-    private suspend fun seedUsers(usersCol: com.google.firebase.firestore.CollectionReference) {
-        val users = listOf(
-            User(
-                name = "Admin User",
-                email = "admin@example.com",
-                role = "Admin",
-                passwordHash = hashString("12345678")
-            ),
-            User(
-                name = "Project Owner",
-                email = "chris@tambayong.com",
-                role = "Master App",
-                passwordHash = hashString("12345678")
-            )
-        )
-
-        for (user in users) {
-            var exists = false
-            var checkSuccess = false
-            try {
-                // Try from cache first, then server
-                val existing = try {
-                    usersCol.whereEqualTo("email", user.email).limit(1).get(com.google.firebase.firestore.Source.CACHE).await()
-                } catch (cacheEx: Exception) {
-                    usersCol.whereEqualTo("email", user.email).limit(1).get(com.google.firebase.firestore.Source.SERVER).await()
-                }
-                exists = !existing.isEmpty
-                checkSuccess = true
-            } catch (e: Exception) {
-                // ignore
-            }
-            if (checkSuccess && !exists) {
-                val docRef = usersCol.document()
-                docRef.set(user.copy(id = docRef.id)) // DO NOT await()!
-            }
-        }
-    }
-
-    private fun hashString(input: String): String {
-        val bytes = java.security.MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
-        return bytes.joinToString("") { "%02x".format(it) }
-    }
 }

@@ -21,3 +21,8 @@ venv/
 .settings/
 bin/
 app/google-services.json
+
+# Private signing credentials and account exports
+*.keystore
+*.jks
+**/credentials.json

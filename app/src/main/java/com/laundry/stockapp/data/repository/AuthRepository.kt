@@ -3,6 +3,7 @@ package com.laundry.stockapp.data.repository
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.laundry.stockapp.data.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,6 +20,7 @@ class AuthRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
 ) {
+    private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val usersCol = db.collection("users")
 
@@ -27,84 +29,50 @@ class AuthRepository @Inject constructor(
     private val LOGGED_IN_USER_NAME = stringPreferencesKey("logged_in_user_name")
     private val LOGGED_IN_USER_EMAIL = stringPreferencesKey("logged_in_user_email")
 
-    val loggedInUserId: Flow<String?> = context.dataStore.data.map { it[LOGGED_IN_USER_ID] }
+    val loggedInUserId: Flow<String?> = context.dataStore.data.map { preferences ->
+        auth.currentUser?.uid?.takeIf { it == preferences[LOGGED_IN_USER_ID] }
+    }
     val loggedInUserRole: Flow<String?> = context.dataStore.data.map { it[LOGGED_IN_USER_ROLE] }
     val loggedInUserName: Flow<String?> = context.dataStore.data.map { it[LOGGED_IN_USER_NAME] }
     val loggedInUserEmail: Flow<String?> = context.dataStore.data.map { it[LOGGED_IN_USER_EMAIL] }
 
     suspend fun login(email: String, password: String): User {
-        val cleanEmail = email.trim()
-        val hash = hashString(password)
-
-        // Try to login via Firestore first to get actual doc ID and master password
+        logout()
         try {
-            val snapshot = usersCol
-                .whereEqualTo("email", cleanEmail)
-                .limit(1)
-                .get()
-                .await()
-
-            if (!snapshot.isEmpty) {
-                val doc = snapshot.documents.first()
-                val user = doc.toObject(User::class.java)!!
-
-                // Allow either correct DB password hash OR hardcoded bypass password for pre-seeded users
-                val isPasswordCorrect = user.passwordHash == hash ||
-                        ((cleanEmail.equals("chris@tambayong.com", ignoreCase = true) ||
-                          cleanEmail.equals("admin@example.com", ignoreCase = true)) && password == "12345678")
-
-                if (isPasswordCorrect) {
-                    saveSession(user.id, user.role.orEmpty(), user.name.orEmpty(), user.email.orEmpty())
-                    
-                    // Restore master password hash from Firestore if exists
-                    val cloudHash = user.masterPasswordHash
-                    if (!cloudHash.isNullOrEmpty()) {
-                        settingsRepository.setMasterPasswordHash(cloudHash)
-                    }
-                    return user
-                } else {
-                    throw Exception("Email atau Sandi salah")
-                }
-            }
-        } catch (e: Exception) {
-            if (e.message == "Email atau Sandi salah") throw e
-            // If network fails or user doesn't exist online, fallback to local/hardcoded check below
-        }
-
-        // Offline / cached fallback for pre-seeded users
-        if (cleanEmail.equals("chris@tambayong.com", ignoreCase = true) && password == "12345678") {
-            val user = User(id = "master_id", name = "Project Owner", email = cleanEmail, role = "Master App", passwordHash = "")
-            saveSession(user.id, user.role.orEmpty(), user.name.orEmpty(), user.email.orEmpty())
+            val principal = auth.signInWithEmailAndPassword(email.trim(), password).await().user
+                ?: throw Exception("Email atau sandi salah")
+            val claims = principal.getIdToken(true).await().claims
+            if (claims["jclAdmin"] != true) throw Exception("Akun belum disetujui administrator")
+            val profile = usersCol.document(principal.uid).get().await().toObject(User::class.java)
+            val role = if (claims["jclMaster"] == true) "Master App" else "Admin"
+            val user = User(id = principal.uid, name = profile?.name ?: principal.displayName.orEmpty(),
+                email = principal.email.orEmpty(), phone = profile?.phone.orEmpty(), role = role)
+            saveSession(user.id, role, user.name.orEmpty(), user.email.orEmpty())
             return user
+        } catch (error: Exception) {
+            logout()
+            throw error
         }
-        if (cleanEmail.equals("admin@example.com", ignoreCase = true) && password == "12345678") {
-            val user = User(id = "admin_id", name = "Admin User", email = cleanEmail, role = "Admin", passwordHash = "")
-            saveSession(user.id, user.role.orEmpty(), user.name.orEmpty(), user.email.orEmpty())
-            return user
-        }
-
-        throw Exception("Email atau Sandi salah")
     }
 
     suspend fun register(user: User): User {
-        // Check if email exists
-        val existing = usersCol.whereEqualTo("email", user.email).limit(1).get().await()
-        if (!existing.isEmpty) {
-            throw Exception("Email sudah terdaftar")
+        // Account creation never grants inventory or administrator access.
+        val principal = auth.createUserWithEmailAndPassword(user.email.orEmpty().trim(), user.passwordHash.orEmpty()).await().user
+            ?: throw Exception("Pendaftaran gagal")
+        try {
+            principal.sendEmailVerification().await()
+            usersCol.document(principal.uid).set(mapOf(
+                "name" to user.name.orEmpty(), "email" to principal.email.orEmpty(),
+                "phone" to user.phone.orEmpty(), "role" to "Pending"
+            )).await()
+        } finally {
+            logout()
         }
-
-        val docRef = usersCol.document()
-        val userToSave = user.copy(
-            id = docRef.id,
-            passwordHash = hashString(user.passwordHash.orEmpty()) // Assume password was passed in passwordHash field
-        )
-        docRef.set(userToSave).await()
-        
-        saveSession(userToSave.id, userToSave.role.orEmpty(), userToSave.name.orEmpty(), userToSave.email.orEmpty())
-        return userToSave
+        throw Exception("Akun dibuat. Verifikasi email dan minta persetujuan administrator sebelum masuk.")
     }
 
     suspend fun logout() {
+        auth.signOut()
         context.dataStore.edit { preferences ->
             preferences.remove(LOGGED_IN_USER_ID)
             preferences.remove(LOGGED_IN_USER_ROLE)
@@ -114,23 +82,8 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun updateMasterPasswordInCloud(password: String) {
-        try {
-            val userId = loggedInUserId.firstOrNull() ?: return
-            val hash = hashString(password)
-            if (userId != "master_id" && userId != "admin_id") {
-                usersCol.document(userId).update("masterPasswordHash", hash).await()
-            } else {
-                // If logged in under hardcoded fallback session, update via email lookup
-                val email = loggedInUserEmail.firstOrNull() ?: return
-                val snapshot = usersCol.whereEqualTo("email", email).limit(1).get().await()
-                if (!snapshot.isEmpty) {
-                    snapshot.documents.first().reference.update("masterPasswordHash", hash).await()
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // Ignore exceptions to prevent crashing the offline UI flow
-        }
+        // This PIN is a local convenience lock, not a cloud authentication credential.
+        settingsRepository.setMasterPasswordHash(hashString(password))
     }
 
     private suspend fun saveSession(userId: String, role: String, name: String, email: String) {

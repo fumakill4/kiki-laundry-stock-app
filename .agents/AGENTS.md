@@ -3,7 +3,7 @@
 To prevent integration oversights and ensure seamless setups in future projects, the following rules and checks must be applied:
 
 ## 1. Firebase & Google Cloud Server-Side Verification
-* **Never assume the Firebase/Cloud database is initialized**: Even if `google-services.json` is present in the project, always ask the user to verify if the Firestore Database instance has been initialized in the Firebase Console. If not, guide them to initialize it in **"Test Mode"** first so that background synchronization can succeed.
+* **Never assume the Firebase/Cloud database is initialized**: Even if `google-services.json` is present in the project, always ask the user to verify if the Firestore Database instance has been initialized in the Firebase Console. If not, initialize it with the reviewed authorization rules; never enable public read/write access to make synchronization succeed.
 * **Google Drive API Status**: If the app features Google Drive backups, explicitly instruct the user to enable the **Google Drive API** in the Google Cloud Console for the active project.
 * **OAuth consent screen Publishing Status**:
   * For development and testing of Google Sign-in and Google Drive integration, ensure the project's OAuth publishing status is set to **"Testing"** in Google Cloud Console.
@@ -21,13 +21,13 @@ To prevent integration oversights and ensure seamless setups in future projects,
 ## 4. Build Compilation & Project Folder Isolation
 * **Incremental Versioning**: Every time you compile a new APK/AAB, you MUST increment the version number in the Gradle configuration (both `versionName` and `versionCode`). Do not reuse version numbers for different builds.
 * **Folder Isolation**: Keep laundry files and Toko Queensha files completely separated.
-  * Laundry app deliverables (APK, AAB, `.md` reports) must only go to `/Users/christambayong/Downloads/JCL KIKI/`.
-  * Toko Queensha app deliverables must only go to `/Users/christambayong/Downloads/Toko Queensha/`.
+  * Laundry app deliverables (APK, AAB, `.md` reports) must only go to `~/workspace/Downloads/JCL KIKI/`.
+  * Toko Queensha app deliverables must only go to `~/workspace/Downloads/Toko Queensha/`.
   * Never copy or build laundry apps into the Toko Queensha folder or vice versa.
 * **Safe Deletions**: Always double-check absolute file paths before calling delete or remove commands to avoid accidentally deleting other projects' files or documentation.
 
 ## 5. In-Code Digital Signature
-* **Insert Digital Signature**: Always insert the digital signature comment or constant in the code: `"This App was build by Chris Tambayong - Fumakill4"`.
+* **Insert Digital Signature**: Always insert the digital signature comment or constant in the code: `"This App was build by i729 - Fumakill4"`.
 * **Placement**: This signature must be placed inside the codebase (e.g., in a code comment, String constant, or internal metadata initialization), not in any user-facing UI screens. This ensures that when the APK is decompiled or inspected, the signature remains visible.
 
 ## 6. Network Timeouts & Resiliency (Preventing App Hangs)

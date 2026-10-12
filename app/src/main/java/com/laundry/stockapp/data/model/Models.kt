@@ -8,7 +8,7 @@ data class User(
     val name: String? = "",
     val email: String? = "",
     val phone: String? = "",
-    val role: String? = "Admin", // "Master App" or "Admin"
+    val role: String? = "Pending", // Access comes from verified server claims.
     val passwordHash: String? = "",
     val masterPasswordHash: String? = "",
     val createdAt: Date? = Date()

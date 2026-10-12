@@ -1,6 +1,6 @@
 package com.laundry.stockapp.util
 
-// This App was build by Chris Tambayong - Fumakill4
+// This App was build by i729 - Fumakill4
 
 import android.accounts.Account
 import android.content.Context

@@ -2,7 +2,7 @@ from PIL import Image
 
 def crop_leaf():
     # Load original cropped card image
-    img = Image.open('/Users/christambayong/.gemini/antigravity/brain/6d7dde8a-80ad-4e87-b535-47b6918a43c1/media__1781685825236.png')
+    img = Image.open('~/workspace/.gemini/antigravity/brain/6d7dde8a-80ad-4e87-b535-47b6918a43c1/media__1781685825236.png')
     
     # Crop slightly wider than the leaf bounding box to be safe
     cropped = img.crop((94, 157, 174, 260))

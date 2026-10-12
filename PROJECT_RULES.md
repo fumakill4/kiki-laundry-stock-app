@@ -25,11 +25,11 @@ Dokumen ini berisi catatan penting dari percakapan dan instruksi pemilik aplikas
 
 ## 5. Aturan Rilis & Kompilasi APK (Sangat Penting)
 - **Peningkatan Versi Berkelanjutan**: Setiap kali mengompilasi APK rilis baru, versi aplikasi (`versionName` dan `versionCode`) **wajib** dinaikkan (misal dari v1.1.0 ke v1.1.1, dst). Jangan pernah menggunakan nomor versi yang sama untuk hasil kompilasi yang berbeda agar pengguna tidak bingung.
-- **Isolasi Folder Output Proyek**: Jangan pernah mencampuradukkan file hasil kompilasi (APK, AAB) atau file laporan (.md) antar-proyek. Simpan file hasil Kiki's Laundry di folder `/Users/christambayong/Downloads/JCL KIKI/` dan Toko Queensha di folder `/Users/christambayong/Downloads/Toko Queensha/`. Jangan pernah mengompilasi atau menyalin file laundry ke folder Queensha atau sebaliknya.
+- **Isolasi Folder Output Proyek**: Jangan pernah mencampuradukkan file hasil kompilasi (APK, AAB) atau file laporan (.md) antar-proyek. Simpan file hasil Kiki's Laundry di folder `~/workspace/Downloads/JCL KIKI/` dan Toko Queensha di folder `~/workspace/Downloads/Toko Queensha/`. Jangan pernah mengompilasi atau menyalin file laundry ke folder Queensha atau sebaliknya.
 - **Kehati-hatian Penghapusan File**: Sebelum menjalankan perintah penghapusan (`rm`, `delete`), periksa kembali lokasi absolut file secara detail. Pastikan tidak salah menghapus file proyek lain (misal, menghapus laporan `.md` milik Queensha saat mengelola proyek Laundry).
 
 ## 6. Tanda Tangan Digital Internal (Digital Signature)
-- Selalu tambahkan signature digital di dalam kode sumber aplikasi (sebagai komentar kode atau konstanta internal): `"This App was build by Chris Tambayong - Fumakill4"`.
+- Selalu tambahkan signature digital di dalam kode sumber aplikasi (sebagai komentar kode atau konstanta internal): `"This App was build by i729 - Fumakill4"`.
 - Signature ini harus tertanam di dalam kodingan aplikasi, bukan untuk ditampilkan langsung di layar aplikasi (UI), sehingga jika ada yang membedah/mendekompilasi APK, signature digital tersebut akan tetap terlihat.
 
 ## 7. Mencegah Aplikasi Hang / Stuck di Latar Belakang

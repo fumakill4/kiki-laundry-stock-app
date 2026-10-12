@@ -3,7 +3,7 @@
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 
-val file = FileInputStream("/Users/christambayong/Downloads/20260616 - ITEM OUTLET.xlsx")
+val file = FileInputStream("~/workspace/Downloads/20260616 - ITEM OUTLET.xlsx")
 val workbook = XSSFWorkbook(file)
 
 for (i in 0 until workbook.numberOfSheets) {

@@ -1,4 +1,4 @@
-// This App was build by Chris Tambayong - Fumakill4
+// This App was build by i729 - Fumakill4
 package com.laundry.stockapp
 
 import android.os.Bundle
